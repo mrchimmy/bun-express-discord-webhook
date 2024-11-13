@@ -3,7 +3,7 @@
 <%- include('./components/head.ejs', {title: "หน้าแรก" }) %>
 
     <body>
-        <main class="container h-100 d-flex">
+        <main class="container flex-grow-1 d-flex">
             <div class="row my-auto flex-grow-1 justify-content-center">
                 <div class="col-4">
                     <div class="card">
@@ -12,7 +12,7 @@
                             <div class="mb-2">
                                 <label for="webhook_url" class="form-label">Webhook Link :</label>
                                 <input type="text" class="form-control" id="webhook_url"
-                                    placeholder="https://discord.com/api/webhooks/{channel}/{id}">
+                                    placeholder="https://discord.com/api/webhooks/{id}/{token}">
                             </div>
                             <div class="mb-2">
                                 <label for="webhook_name" class="form-label">Webhook Name :</label>
@@ -42,6 +42,7 @@
                 </div>
             </div>
         </main>
+        <%- include('./components/footer.ejs')%>
         <%- include('./components/scripts.ejs')%>
 
         <script>
