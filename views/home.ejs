@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./components/head.ejs', {title: "หน้าแรก" }) %>
+
+    <body>
+        <main class="container h-100 d-flex">
+            <div class="row my-auto flex-grow-1 justify-content-center">
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Settings</h5>
+                            <div class="mb-2">
+                                <label for="webhook_url" class="form-label">Webhook Link :</label>
+                                <input type="text" class="form-control" id="webhook_url"
+                                    placeholder="https://discord.com/api/webhooks/{channel}/{id}">
+                            </div>
+                            <div class="mb-2">
+                                <label for="webhook_name" class="form-label">Webhook Name :</label>
+                                <input type="text" class="form-control" id="webhook_name"
+                                    placeholder="MrChimKy Webhook">
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-primary" id="save-data">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5>Webhook Message</h5>
+                            <div class="mb-2">
+                                <label for="message-send" class="form-label">Message :</label>
+                                <input type="text" class="form-control" id="message-send"
+                                    placeholder="Enter your content">
+                            </div>
+                            <div class="text-center">
+                                <button class="btn btn-success" id="send-webhook">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <%- include('./components/scripts.ejs')%>
+
+        <script>
+            $(document).ready(function () {
+                const hookUrl = localStorage.getItem('hook_url');
+                if (hookUrl) {
+                    $('#webhook_url').val(hookUrl);
+                }
+                const hookName = localStorage.getItem('hook_name');
+                if (hookName) {
+                    $('#webhook_name').val(hookName);
+                }
+            });
+            $('#save-data').click(function () {
+
+                const webhookUrl = $('#webhook_url').val();
+                const webhookName = $('#webhook_name').val();
+
+                localStorage.setItem('hook_url', webhookUrl);
+                localStorage.setItem('hook_name', webhookName);
+
+                swal.fire({
+                    icon: 'success',
+                    title: 'บันทึกสำเร็จ',
+                    heightAuto: false,
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            });
+            $('#send-webhook').click(function () {
+                const content = $('#message-send').val();
+                const hookUrl = localStorage.getItem('hook_url');
+                const hookName = localStorage.getItem('hook_name');
+
+                if (!hookUrl) return swal.fire({
+                    icon: 'error',
+                    title: 'กรุณากรอก Webhook URL',
+                    heightAuto: false,
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+                if (content.length <= 0) return swal.fire({
+                    icon: 'error',
+                    title: 'กรุณากรอกข้อความที่จะส่ง',
+                    heightAuto: false,
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+                
+                
+                $.ajax({
+                    url: '/webhook',
+                    method: 'POST',
+                    data: { content: content, url: hookUrl, name: hookName },
+                    success: function (response) {
+                        swal.fire({
+                            icon: 'success',
+                            title: 'ส่งข้อความแล้ว',
+                            heightAuto: false,
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                        $('#message-send').val('');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                        swal.fire({
+                            icon: 'error',
+                            title: error,
+                            heightAuto: false,
+                            showConfirmButton: false,
+                            timer: 1500,
+                        });
+                    }
+                });
+            });
+        </script>
+    </body>
+
+</html>
